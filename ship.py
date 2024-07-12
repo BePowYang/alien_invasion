@@ -14,7 +14,7 @@ class Ship(Sprite):
         self.screen_rect = ai_game.screen.get_rect()
 
         # 加载飞船图像并获取其外接矩形
-        self.image = pygame.image.load('alien_invasion\images\spaceship.bmp')
+        self.image = load_image('spaceship.bmp')
         self.rect = self.image.get_rect()
         # 对于每艘新飞船，都将其放在屏幕底部的中央
         self.rect.midbottom = self.screen_rect.midbottom
@@ -56,14 +56,16 @@ class Ship(Sprite):
         """ 在指定位置绘制飞船 """
         self.screen.blit(self.image,self.rect)
 
-def get_resource_path(relative_path):
-    """ 获取资源文件的绝对路径 """
-    if getattr(sys,'frozen',False):
-        # 如果程序被pyinstaller打包成了exe文件，sys.frozen将为True
-        application_path = sys._MEIPASS
-    else:
-        # 如果程序在python解释器中运行，使用脚本文件的当前工作目录
-        application_path = os.path.dirname(os.path.abspath(__file__))
+def load_image(filename):
+    current_path = os.path.dirname(sys.argv[0])
+    image_path = os.path.join(current_path,'images',filename)
 
-    # 根绝相对路径返回资源文件的绝对路径
-    return os.path.join(application_path,relative_path)
+
+    try:
+        image = pygame.image.load(image_path)
+    except pygame.error as e:
+        print("加载图片时发生错误:", e)
+        print("图片文件路径:", image_path)
+        raise SystemExit
+    return image
+
